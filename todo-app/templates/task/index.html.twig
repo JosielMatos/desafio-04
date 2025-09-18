@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Minhas Tarefas{% endblock %}
+
+{% block body %}
+  <h1 class="text-center">Minhas Tarefas</h1>
+
+  <a href="{{ path('app_task_new') }}" class="btn btn-primary mb-3">+ Nova Tarefa</a>
+
+  <div class="d-block d-md-none mb-2">
+    <a href="{{ path('app_task_index', {'sort': 'createdAt', 'direction': sort == 'createdAt' and direction == 'asc' ? 'desc' : 'asc'}) }}" class="btn btn-secondary btn-sm w-100">
+      Ordenar por Data de Criação
+      {% if sort == 'createdAt' %}
+        <span>{{ direction == 'asc' ? '▲' : '▼' }}</span>
+      {% endif %}
+    </a>
+  </div>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>
+          <a href="{{ path('app_task_index', {'sort': 'status', 'direction': sort == 'status' and direction == 'asc' ? 'desc' : 'asc'}) }}">
+            Status
+            {% if sort == 'status' %}
+              <span>{{ direction == 'asc' ? '▲' : '▼' }}</span>
+            {% endif %}
+          </a>
+        </th>
+        <th>Prazo</th>
+        <th class="created-at-col d-none d-md-table-cell">
+          <a href="{{ path('app_task_index', {'sort': 'createdAt', 'direction': sort == 'createdAt' and direction == 'asc' ? 'desc' : 'asc'}) }}">
+            Data de Criação
+            {% if sort == 'createdAt' %}
+              <span>{{ direction == 'asc' ? '▲' : '▼' }}</span>
+            {% endif %}
+          </a>
+        </th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for task in tasks %}
+      <tr>
+        <td>{{ task.title }}</td>
+        <td>
+          {% if task.status == 'todo' %}
+            <span class="badge bg-warning">A Fazer</span>
+          {% elseif task.status == 'in_progress' %}
+            <span class="badge bg-info">Em Progresso</span>
+          {% else %}
+            <span class="badge bg-success">Concluída</span>
+          {% endif %}
+        </td>
+        <td>{{ task.dueAt ? task.dueAt|date('d/m/Y H:i') : '-' }}</td>
+        <td class="created-at-col d-none d-md-table-cell">{{ task.createdAt ? task.createdAt|date('d/m/Y H:i') : '-' }}</td>
+        <td>
+          <div class="d-flex flex-column gap-2 flex-md-row">
+            <a href="{{ path('app_task_show', {id: task.id}) }}" class="btn btn-sm btn-secondary">Ver</a>
+            <a href="{{ path('app_task_edit', {id: task.id}) }}" class="btn btn-sm btn-warning">Editar</a>
+            <form method="post" action="{{ path('app_task_delete', {id: task.id}) }}" class="d-inline">
+              <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ task.id) }}">
+              <button class="btn btn-sm btn-danger w-100" onclick="return confirm('Tem certeza que deseja deletar?');">Deletar</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+    {% else %}
+      <tr>
+        <td colspan="5" class="text-center">Nenhuma tarefa encontrada</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
