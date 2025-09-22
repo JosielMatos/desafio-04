@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Editar Tarefa{% endblock %}
+
+{% block body %}
+    <h1 class="text-center">Editar Tarefa</h1>
+
+    <form method="post">
+        {{ form_widget(form) }}
+        <div class="d-flex gap-2 mt-3 justify-content-center">
+            <button type="submit" class="btn btn-primary">Atualizar</button>
+            <a href="{{ path('app_task_index') }}" class="btn btn-secondary">⬅ Voltar</a>
+            {{ include('task/_delete_form.html.twig') }}
+        </div>
+    </form>
+{% endblock %}
