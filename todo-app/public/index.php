@@ -1,9 +1,38 @@
 <?php
+require_once __DIR__ . '/../src/config.php';
+require_once __DIR__ . '/../src/TaskRepository.php';
+require_once __DIR__ . '/../src/controllers/TaskController.php';
 
-use App\Kernel;
+$action = $_GET['action'] ?? 'list';
 
-require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+$controller = new TaskController($pdo);
 
-return function (array $context) {
-    return new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
-};
+switch ($action) {
+    case 'list':
+        $controller->list();
+        break;
+    case 'create':
+        $controller->create();
+        break;
+    case 'store':
+        $controller->store($_POST);
+        break;
+    case 'edit':
+        $controller->edit($_GET['id']);
+        break;
+    case 'update':
+        $controller->update($_POST);
+        break;
+    case 'delete':
+        $controller->delete($_GET['id']);
+        break;
+    case 'show':
+        $controller::show($pdo, $_GET['id']);
+        break;
+    case 'logout':
+        session_destroy();
+        header("Location: login.php");
+        exit;
+    default:
+        echo "Ação inválida!";
+}
